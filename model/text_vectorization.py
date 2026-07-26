@@ -2,11 +2,12 @@ import tensorflow as tf
 import keras
 import pandas as pd
 import numpy as np
-#from keras.preprocessing import pad_sequences
 from keras.layers import Bidirectional
 from keras.layers import Embedding, Dense, LSTM, Input, Conv1D, MaxPooling1D, Dropout, TextVectorization
 from keras.models import Sequential
+from sklearn.metrics import classification_report
 
+# loss, accuracy, F1-score, precision, recall, ROC-AUC, and PR-AUC
 max_features = 18000
 chunk = 5000
 stride_size = 5000
@@ -25,29 +26,13 @@ def chunk_seq(sequence, chunk_size, stride):
     return chunks
 
 
-training_df = pd.read_csv(r'C:\Users\\raypi\\coding\\SoftwareProjects\\phager\\building_data\\training_data.csv')
-testing_df = pd.read_csv(r'C:\Users\\raypi\\coding\\SoftwareProjects\\phager\\building_data\\testing_data.csv')
-validation_df = pd.read_csv(r"C:\Users\\raypi\\coding\\SoftwareProjects\\phager\\building_data\\validation_data.csv")
+training_df = pd.read_csv(r'C:\Users\raypi\coding\phager\building_data\training_data.csv')
+testing_df = pd.read_csv(r'C:\Users\raypi\coding\phager\building_data\testing_data.csv')
+validation_df = pd.read_csv(r"C:\Users\raypi\coding\phager\building_data\validation_data.csv")
 
 training_df = training_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
 testing_df = testing_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
 validation_df = validation_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
-
-
-
-
-'''
-x_training = (training_df['protein_sentence']).astype(str).tolist()
-y_training = (training_df['Binary Lifestyle']).to_numpy(dtype=np.float32)
-
-x_testing = (testing_df['protein_sentence']).astype(str).tolist()
-y_testing = testing_df['Binary Lifestyle'].to_numpy(dtype=np.float32)
-
-x_validation = validation_df['protein_sentence'].astype(str).tolist()
-y_validation = validation_df['Binary Lifestyle'].to_numpy(dtype=np.float32)
-'''
-
-
 
 x_training = []
 y_training = []
@@ -121,6 +106,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(8)
 
 val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(8)
+test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(8)
 
 
 train = model.fit(
@@ -128,3 +114,23 @@ train = model.fit(
     epochs=10,
     validation_data= val_ds,
 )
+model.save("phage-bilstm_SAVE.keras")
+
+y_pred_probs = model.predict(np.array(x_testing, dtype=object))
+y_pred_classes = (y_pred_probs>=0.5).astype("int32")
+
+print("--------------Classification Report:--------------------")
+print(classification_report(y_testing, y_pred_classes, target_names=['Temperate', 'Virulent']))
+
+
+'''
+test_loss, test_acc = model.evaluate(test_ds, verbose=1)
+
+print(f"Test Loss:  {test_loss:.4f}")
+print(f"Test Accuracy:  {test_acc:.4f} ({test_acc * 100:.2f}%)")
+'''
+
+
+
+
+
