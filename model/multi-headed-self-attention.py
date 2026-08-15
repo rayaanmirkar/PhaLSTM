@@ -104,10 +104,14 @@ model.add(Dropout(0.2))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 '''
+
+
+
+
 inputs = Input(shape=(1,), dtype=tf.string)
 x = vectorization_layer(inputs)
 x = Embedding(input_dim=(dim_size+1), output_dim=32)(x)
-x = Conv1D(filters=128, kernel_size=15, strides=1, activation='relu')(x)
+x = Conv1D(filters=128, kernel_size=15, strides=1, activation='relu', padding='same')(x)
 x = MaxPooling1D(pool_size=10)(x)
 
 bilstm = Bidirectional(LSTM(units=64, dropout=0.2, return_sequences=True))(x)
@@ -115,7 +119,7 @@ bilstm = Bidirectional(LSTM(units=64, dropout=0.2, return_sequences=True))(x)
 
 
 #ATTENTION MECHANISM
-attention_out = MultiHeadAttention(num_heads=4, key_dim=64)(query=bilstm, value=bilstm, key=bilstm)
+attention_out = MultiHeadAttention(num_heads=4, key_dim=64, output_shape=128)(query=bilstm, value=bilstm, key=bilstm)
 attention_out = Add()([bilstm, attention_out])
 attention_out = LayerNormalization()(attention_out)
 attention_out = Dropout(0.2)(attention_out)
@@ -141,7 +145,7 @@ train = model.fit(
 )
 model.save("phage-bilstm_SAVE.keras")
 
-y_pred_probs = model.predict(np.array(x_testing, dtype=str))
+y_pred_probs = model.predict(test_ds)
 y_pred_classes = (y_pred_probs>=0.5).astype("int32")
 
 print("--------------Classification Report:--------------------")
