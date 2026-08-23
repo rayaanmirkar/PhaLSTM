@@ -5,8 +5,11 @@ import numpy as np
 from keras.layers import Bidirectional
 from keras.layers import Embedding, Dense, LSTM, Input, Conv1D, MaxPooling1D, Dropout, TextVectorization, GlobalMaxPool1D
 from keras.models import Sequential
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, matthews_corrcoef, PrecisionRecallDisplay
 from sklearn.utils.class_weight import compute_class_weight
+import matplotlib.pyplot as plt
+
+
 
 # loss, accuracy, F1-score, precision, recall, ROC-AUC, and PR-AUC
 max_features = 18000
@@ -122,11 +125,31 @@ train = model.fit(
 )
 model.save("phage-bilstm_SAVE.keras")
 
+y_true = np.concatenate([y for x, y in test_ds], axis=0).flatten()
 y_pred_probs = model.predict(np.array(x_testing, dtype=object))
 y_pred_classes = (y_pred_probs>=0.5).astype("int32")
 
+mcc = matthews_corrcoef(y_true, y_pred_classes)
+
+
+#proteome size vs performance 
+lengths = [len(seq) for seq in testing_df['protein_sentence'] for _ in chunk_seq(seq, chunk, stride_size)]
+df = pd.DataFrame({"Length": lengths, "Correct": (y_pred_classes == y_testing)})
+df["Size"] = pd.qcut(df["Length"], q=3, labels=["Small", "Medium", "Large"])
+df.groupby("Size", observed=False)["Correct"].mean().plot(kind="bar", color="#4C72B0")
+plt.savefig("dilution_graph.png")
+plt.close()
+
+
+##PRC GRAPH
+PrecisionRecallDisplay.from_predictions(y_true, y_pred_probs, color="#DD8452")
+plt.savefig("prc_graph.png")
+plt.close()
+
+
 print("--------------Classification Report:--------------------")
 print(classification_report(y_testing, y_pred_classes, target_names=['Temperate', 'Virulent']))
+print(f"MCC Score: {mcc:.4f}")
 
 
 '''
