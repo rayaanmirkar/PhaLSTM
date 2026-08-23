@@ -10,24 +10,21 @@ from sklearn.utils.class_weight import compute_class_weight
 
 # loss, accuracy, F1-score, precision, recall, ROC-AUC, and PR-AUC
 max_features = 18000
-chunk = 300
-stride_size = 150
+chunk = 5000
+stride_size = 5000
 
 def chunk_seq(sequence, chunk_size, stride):
-
-    proteins = sequence.split()
 
     chunks = []
 
     for i in range(0, len(sequence), stride):
 
-        chunk_slice = proteins[i:i + chunk_size]
+        chunk = sequence[i:i + chunk_size]
 
-        if len(chunk_slice) == chunk_size:
-            chunks.append(" ".join(chunk_slice))
+        if len(chunk) == chunk_size:
+            chunks.append(chunk)
 
     return chunks
-
 
 training_df = pd.read_csv(r'C:\Users\raypi\coding\PhaLSTM\building_data\training_data.csv')
 testing_df = pd.read_csv(r'C:\Users\raypi\coding\PhaLSTM\building_data\testing_data.csv')
@@ -87,11 +84,11 @@ y_validation = np.array(y_validation, dtype=np.float32)
 y_testing = np.array(y_testing, dtype=np.float32)
 
 vectorization_layer = TextVectorization(
-    max_tokens= max_features,
-    standardize="lower_and_strip_punctuation",
+    max_tokens= 30,
+    standardize=None,
     output_mode="int",
     output_sequence_length=chunk,
-    split="whitespace")
+    split="character")
 
 vectorization_layer.adapt(x_training)
 dim_size = vectorization_layer.vocabulary_size() # maybe use vocab size method?
@@ -106,19 +103,21 @@ model.add(Dropout(0.2))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(32)
+train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(8)
 
-val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(32)
-test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(32)
+val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(8)
+test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(8)
+
 
 weights = compute_class_weight('balanced', classes=np.unique(y_training), y=y_training)
 class_weight_dict = dict(enumerate(weights))
+
 
 train = model.fit(
     train_ds,
     epochs=10,
     validation_data= val_ds,
-    class_weight=class_weight_dict  
+    class_weight=class_weight_dict
 
 )
 model.save("phage-bilstm_SAVE.keras")
