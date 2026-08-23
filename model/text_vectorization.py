@@ -126,7 +126,7 @@ train = model.fit(
 model.save("phage-bilstm_SAVE.keras")
 
 y_true = np.concatenate([y for x, y in test_ds], axis=0).flatten()
-y_pred_probs = model.predict(np.array(x_testing, dtype=object))
+y_pred_probs = model.predict(np.array(x_testing, dtype=object)).flatten()
 y_pred_classes = (y_pred_probs>=0.5).astype("int32")
 
 mcc = matthews_corrcoef(y_true, y_pred_classes)
@@ -134,7 +134,7 @@ mcc = matthews_corrcoef(y_true, y_pred_classes)
 
 #proteome size vs performance 
 lengths = [len(seq) for seq in testing_df['protein_sentence'] for _ in chunk_seq(seq, chunk, stride_size)]
-df = pd.DataFrame({"Length": lengths, "Correct": (y_pred_classes == y_testing)})
+df = pd.DataFrame({"Length": lengths, "Correct": (y_pred_classes.flatten() == y_testing.flatten())})
 df["Size"] = pd.qcut(df["Length"], q=3, labels=["Small", "Medium", "Large"])
 df.groupby("Size", observed=False)["Correct"].mean().plot(kind="bar", color="#4C72B0")
 plt.savefig("dilution_graph.png")
@@ -148,7 +148,7 @@ plt.close()
 
 
 print("--------------Classification Report:--------------------")
-print(classification_report(y_testing, y_pred_classes, target_names=['Temperate', 'Virulent']))
+print(classification_report(y_true, y_pred_classes, target_names=['Temperate', 'Virulent']))
 print(f"MCC Score: {mcc:.4f}")
 
 
