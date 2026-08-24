@@ -102,7 +102,7 @@ model.add(vectorization_layer)
 model.add(Embedding(input_dim=(dim_size+1), output_dim=32))
 model.add(Conv1D(filters = 128, kernel_size=15, strides=1, activation= 'relu'))
 model.add(Bidirectional(LSTM(units=64, dropout=0.2)))
-model.add(Dropout(0.2))
+model.add(Dropout(0.6))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
