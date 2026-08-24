@@ -137,6 +137,7 @@ lengths = [len(seq) for seq in testing_df['protein_sentence'] for _ in chunk_seq
 df = pd.DataFrame({"Length": lengths, "Correct": (y_pred_classes.flatten() == y_testing.flatten())})
 df["Size"] = pd.qcut(df["Length"], q=3, labels=["Small", "Medium", "Large"])
 df.groupby("Size", observed=False)["Correct"].mean().plot(kind="bar", color="#4C72B0")
+plt.ylabel("Accuracy Rate")
 plt.savefig("dilution_graph.png")
 plt.close()
 
