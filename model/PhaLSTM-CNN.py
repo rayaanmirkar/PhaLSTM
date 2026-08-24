@@ -61,10 +61,14 @@ vectorization_layer = TextVectorization(
 
 vectorization_layer.adapt(x_training)
 dim_size = vectorization_layer.vocabulary_size() # maybe use vocab size method?
-    
+
+x_train_vec = vectorization_layer(x_training)
+x_val_vec = vectorization_layer(x_validation)
+x_test_vec = vectorization_layer(x_testing)
+
 #model architecture
 model = Sequential()
-model.add(vectorization_layer)
+model.add(Input(shape=(max_len,), dtype='int32')) 
 model.add(Embedding(input_dim=(dim_size+1), output_dim=32, mask_zero=True))
 model.add(Conv1D(filters = 128, kernel_size=15, strides=1, activation= 'relu', padding='same'))
 model.add(Bidirectional(LSTM(units=64, dropout=0.2)))
@@ -72,10 +76,10 @@ model.add(Dropout(0.6))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(8)
+train_ds = tf.data.Dataset.from_tensor_slices((x_train_vec, y_training)).batch(8)
+val_ds = tf.data.Dataset.from_tensor_slices((x_val_vec, y_validation)).batch(8)
+test_ds = tf.data.Dataset.from_tensor_slices((x_test_vec, y_testing)).batch(8)
 
-val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(8)
-test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(8)
 
 
 weights = compute_class_weight('balanced', classes=np.unique(y_training), y=y_training)
@@ -92,7 +96,7 @@ train = model.fit(
 model.save("phage-bilstm_SAVE.keras")
 
 y_true = y_testing
-y_pred_probs = model.predict(x_testing).flatten() 
+y_pred_probs = model.predict(x_test_vec).flatten()
 y_pred_classes = (y_pred_probs>=0.5).astype("int32")
 
 mcc = matthews_corrcoef(y_true, y_pred_classes)
