@@ -19,9 +19,9 @@ stride_size = 5000
 
 
 
-training_df = pd.read_csv(r'C:\Users\raypi\coding\PhaLSTM\building_data\training_data.csv')
-testing_df = pd.read_csv(r'C:\Users\raypi\coding\PhaLSTM\building_data\testing_data.csv')
-validation_df = pd.read_csv(r"C:\Users\raypi\coding\PhaLSTM\building_data\validation_data.csv")
+training_df = pd.read_csv('building_data/training_data.csv')
+testing_df = pd.read_csv('building_data/testing_data.csv')
+validation_df = pd.read_csv('building_data/validation_data.csv')
 
 training_df = training_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
 testing_df = testing_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
@@ -72,10 +72,10 @@ model.add(Dropout(0.6))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(8)
+train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(64)
 
-val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(8)
-test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(8)
+val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(64)
+test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(64)
 
 
 weights = compute_class_weight('balanced', classes=np.unique(y_training), y=y_training)
