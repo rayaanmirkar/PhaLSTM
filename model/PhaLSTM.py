@@ -16,6 +16,8 @@ max_features = 18000
 chunk = 5000
 stride_size = 5000
 
+
+
 def chunk_seq(sequence, chunk_size, stride):
 
     chunks = []
@@ -80,6 +82,9 @@ for seq, label in zip(
     x_testing.extend(chunks)
 
     y_testing.extend([label] * len(chunks))
+
+
+
 
 
 y_training = np.array(y_training, dtype=np.float32)
