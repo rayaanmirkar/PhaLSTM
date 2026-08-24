@@ -72,10 +72,10 @@ model.add(Dropout(0.6))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(64)
+train_ds = tf.data.Dataset.from_tensor_slices((x_training, y_training)).batch(8)
 
-val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(64)
-test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(64)
+val_ds = tf.data.Dataset.from_tensor_slices((x_validation, y_validation)).batch(8)
+test_ds = tf.data.Dataset.from_tensor_slices((x_testing, y_testing)).batch(8)
 
 
 weights = compute_class_weight('balanced', classes=np.unique(y_training), y=y_training)
