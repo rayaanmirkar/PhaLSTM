@@ -19,23 +19,23 @@ stride_size = 5000
 
 
 
-training_df = pd.read_csv('building_data/new_train_split.csv')
-testing_df = pd.read_csv('building_data/new_test_split.csv')
-validation_df = pd.read_csv('building_data/new_val_split.csv')
+training_df = pd.read_csv('building_data/train_split.csv')
+testing_df = pd.read_csv('building_data/test_split.csv')
+validation_df = pd.read_csv('building_data/val_split.csv')
 
-training_df = training_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
-testing_df = testing_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
-validation_df = validation_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
+training_df = training_df.dropna(subset=['protein_sentence', 'Binary lifestyle'])
+testing_df = testing_df.dropna(subset=['protein_sentence', 'Binary lifestyle'])
+validation_df = validation_df.dropna(subset=['protein_sentence', 'Binary lifestyle'])
 
 
 x_training = training_df['protein_sentence'].astype(str).values
-y_training = training_df['Binary Lifestyle'].astype(np.float32).values
+y_training = training_df['Binary lifestyle'].astype(np.float32).values
 
 x_validation = validation_df['protein_sentence'].astype(str).values
-y_validation = validation_df['Binary Lifestyle'].astype(np.float32).values
+y_validation = validation_df['Binary lifestyle'].astype(np.float32).values
 
 x_testing = testing_df['protein_sentence'].astype(str).values
-y_testing = testing_df['Binary Lifestyle'].astype(np.float32).values
+y_testing = testing_df['Binary lifestyle'].astype(np.float32).values
 
 max_len = max(
     max(len(seq) for seq in x_training),
