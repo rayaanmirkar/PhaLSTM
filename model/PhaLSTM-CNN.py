@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 
 # loss, accuracy, F1-score, precision, recall, ROC-AUC, and PR-AUC
-max_features = 60000
+#max_features = 60000
 chunk = 5000
 stride_size = 5000
 
@@ -69,7 +69,7 @@ x_test_vec = vectorization_layer(x_testing)
 #model architecture
 model = Sequential()
 model.add(Input(shape=(max_len,), dtype='int32')) 
-model.add(Embedding(input_dim=(dim_size+1), output_dim=32, mask_zero=True))
+model.add(Embedding(input_dim=(dim_size+1), output_dim=32, mask_zero=False))
 model.add(Conv1D(filters = 128, kernel_size=15, strides=1, activation= 'relu', padding='same'))
 model.add(Bidirectional(LSTM(units=64, dropout=0.2)))
 model.add(Dropout(0.6))
