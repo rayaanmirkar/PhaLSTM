@@ -37,15 +37,15 @@ y_validation = validation_df['Binary lifestyle'].astype(np.float32).values
 x_testing = testing_df['protein_sentence'].astype(str).values
 y_testing = testing_df['Binary lifestyle'].astype(np.float32).values
 
-'''
+
 max_len = max(
     max(len(seq) for seq in x_training),
     max(len(seq) for seq in x_validation),
     max(len(seq) for seq in x_testing)
 )
-'''
 
-max_len = 25000
+
+#max_len = 25000
 
 
 
