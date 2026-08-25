@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 
 # loss, accuracy, F1-score, precision, recall, ROC-AUC, and PR-AUC
-max_features = 18000
+max_features = 60000
 chunk = 5000
 stride_size = 5000
 
