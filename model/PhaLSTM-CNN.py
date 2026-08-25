@@ -69,16 +69,16 @@ x_test_vec = vectorization_layer(x_testing)
 #model architecture
 model = Sequential()
 model.add(Input(shape=(max_len,), dtype='int32')) 
-model.add(Embedding(input_dim=(dim_size+1), output_dim=32, mask_zero=True))
+model.add(Embedding(input_dim=(dim_size+1), output_dim=32))
 model.add(Conv1D(filters = 128, kernel_size=15, strides=1, activation= 'relu', padding='same'))
-model.add(Bidirectional(LSTM(units=64, dropout=0.2)))
+model.add(Bidirectional(LSTM(units=64)))
 model.add(Dropout(0.6))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-train_ds = tf.data.Dataset.from_tensor_slices((x_train_vec, y_training)).batch(8)
-val_ds = tf.data.Dataset.from_tensor_slices((x_val_vec, y_validation)).batch(8)
-test_ds = tf.data.Dataset.from_tensor_slices((x_test_vec, y_testing)).batch(8)
+train_ds = tf.data.Dataset.from_tensor_slices((x_train_vec, y_training)).batch(8, drop_remainder=True)
+val_ds = tf.data.Dataset.from_tensor_slices((x_val_vec, y_validation)).batch(8, drop_remainder=True)
+test_ds = tf.data.Dataset.from_tensor_slices((x_test_vec, y_testing)).batch(8, drop_remainder=True)
 
 
 
