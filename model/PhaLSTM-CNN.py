@@ -19,9 +19,9 @@ stride_size = 5000
 
 
 
-training_df = pd.read_csv('building_data/training_data.csv')
-testing_df = pd.read_csv('building_data/testing_data.csv')
-validation_df = pd.read_csv('building_data/validation_data.csv')
+training_df = pd.read_csv('building_data/new_train_split.csv')
+testing_df = pd.read_csv('building_data/new_test_split.csv')
+validation_df = pd.read_csv('building_data/new_val_split.csv')
 
 training_df = training_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
 testing_df = testing_df.dropna(subset=['protein_sentence', 'Binary Lifestyle'])
