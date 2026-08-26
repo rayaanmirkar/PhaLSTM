@@ -1,14 +1,14 @@
 --------------Classification Report:--------------------
               precision    recall  f1-score   support
 
-   Temperate       0.71      0.73      0.72        33
-    Virulent       0.72      0.70      0.71        33
+   Temperate       0.89      0.63      0.74        52
+    Virulent       0.65      0.90      0.76        40
 
-    accuracy                           0.71        66
-   macro avg       0.71      0.71      0.71        66
-weighted avg       0.71      0.71      0.71        66
+    accuracy                           0.75        92
+   macro avg       0.77      0.77      0.75        92
+weighted avg       0.79      0.75      0.75        92
 
-MCC Score: 0.4244
+MCC Score: 0.5405
 
 
 #RUN ON GOOGLE COLLAB
