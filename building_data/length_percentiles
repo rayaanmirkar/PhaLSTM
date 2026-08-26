@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
 
-training_df = pd.read_csv('building_data/train_split.csv')
+training_df = pd.read_csv('building_data/final.csv')
 training_df = training_df.dropna(subset=['protein_sentence', 'Binary lifestyle'])
 x_training = training_df['protein_sentence'].astype(str).values
 
 lengths = np.array([len(seq) for seq in x_training])
 
-print("Training sequence lengths:")
+print("all sequence lengths:")
 print("Min:", lengths.min())
 print("Median:", np.median(lengths))
 print("90th percentile:", np.percentile(lengths, 90))
@@ -20,11 +20,12 @@ print("Max:", lengths.max())
 #RESULTS
 
 '''
-Training sequence lengths:
+All sequence lengths:
 Min: 1637
 Median: 13734.5
 90th percentile: 52752.5
 95th percentile: 54963.75
 99th percentile: 82442.0
 Max: 104908
+
 '''
